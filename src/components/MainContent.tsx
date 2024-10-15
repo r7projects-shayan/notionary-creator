@@ -1,8 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
 import { Moon, Sun } from 'lucide-react';
+import { TodoList } from '@/components/TodoList';
+import { Calendar } from '@/components/Calendar';
+import { KanbanBoard } from '@/components/KanbanBoard';
+import { DrawingBoard } from '@/components/DrawingBoard';
+import { Settings } from '@/components/Settings';
 
-export const MainContent = () => {
+export const MainContent = ({ currentPage }) => {
   const [title, setTitle] = useState('Untitled');
   const [content, setContent] = useState('');
   const [showCommandPalette, setShowCommandPalette] = useState(false);
@@ -82,6 +87,43 @@ export const MainContent = () => {
     }
   }, [content]);
 
+  const renderPageContent = () => {
+    if (currentPage.name === 'Settings') {
+      return <Settings />;
+    }
+
+    return (
+      <>
+        <div className="relative">
+          <textarea
+            ref={contentRef}
+            value={content}
+            onChange={handleContentChange}
+            className="w-full min-h-[calc(100vh-200px)] bg-transparent border-none outline-none resize-none"
+            placeholder="Type '/' for commands"
+          />
+          {showCommandPalette && (
+            <div style={{ position: 'absolute', top: cursorPosition.top, left: cursorPosition.left }}>
+              <CommandPalette onSelect={handleCommandSelect} />
+            </div>
+          )}
+        </div>
+        {content.split('\n').map((line, index) => {
+          const match = line.match(/\[(.*?)\]/);
+          if (match) {
+            const componentName = match[1];
+            return (
+              <div key={index} className="my-4">
+                {renderComponent(componentName)}
+              </div>
+            );
+          }
+          return null;
+        })}
+      </>
+    );
+  };
+
   return (
     <div className={`flex-1 p-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <div className="flex justify-between items-center mb-4">
@@ -99,20 +141,7 @@ export const MainContent = () => {
       <div className="text-sm text-gray-500 mb-4">
         {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
       </div>
-      <div className="relative">
-        <textarea
-          ref={contentRef}
-          value={content}
-          onChange={handleContentChange}
-          className="w-full h-[calc(100vh-200px)] bg-transparent border-none outline-none resize-none"
-          placeholder="Type '/' for commands"
-        />
-        {showCommandPalette && (
-          <div style={{ position: 'absolute', top: cursorPosition.top, left: cursorPosition.left }}>
-            <CommandPalette onSelect={handleCommandSelect} />
-          </div>
-        )}
-      </div>
+      {renderPageContent()}
     </div>
   );
 };
