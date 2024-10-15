@@ -6,6 +6,7 @@ import { Calendar } from '@/components/Calendar';
 import { KanbanBoard } from '@/components/KanbanBoard';
 import { DrawingBoard } from '@/components/DrawingBoard';
 import { Settings } from '@/components/Settings';
+import { Sidebar } from '@/components/Sidebar';
 
 export const MainContent = ({ currentPage }) => {
   const [title, setTitle] = useState('Untitled');
@@ -140,23 +141,26 @@ export const MainContent = ({ currentPage }) => {
   };
 
   return (
-    <div className={`flex-1 p-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-      <div className="flex justify-between items-center mb-4">
-        <input
-          type="text"
-          value={title}
-          onChange={handleTitleChange}
-          className="text-4xl font-bold w-full bg-transparent border-none outline-none"
-          placeholder="Untitled"
-        />
-        <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-          {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
-        </button>
+    <div className="flex h-screen">
+      <Sidebar onPageSelect={() => {}} isDarkMode={isDarkMode} />
+      <div className={`flex-1 p-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
+        <div className="flex justify-between items-center mb-4">
+          <input
+            type="text"
+            value={title}
+            onChange={handleTitleChange}
+            className={`text-4xl font-bold w-full bg-transparent border-none outline-none ${isDarkMode ? 'text-white' : 'text-black'}`}
+            placeholder="Untitled"
+          />
+          <button onClick={toggleTheme} className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}>
+            {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+          </button>
+        </div>
+        <div className="text-sm text-gray-500 mb-4">
+          {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+        </div>
+        {renderPageContent()}
       </div>
-      <div className="text-sm text-gray-500 mb-4">
-        {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-      </div>
-      {renderPageContent()}
     </div>
   );
 };
