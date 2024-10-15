@@ -87,6 +87,21 @@ export const MainContent = ({ currentPage }) => {
     }
   }, [content]);
 
+  const renderComponent = (componentName: string) => {
+    switch (componentName) {
+      case 'To-Do List':
+        return <TodoList />;
+      case 'Calendar':
+        return <Calendar />;
+      case 'Kanban Board':
+        return <KanbanBoard />;
+      case 'Draw Board':
+        return <DrawingBoard />;
+      default:
+        return null;
+    }
+  };
+
   const renderPageContent = () => {
     if (currentPage.name === 'Settings') {
       return <Settings />;
