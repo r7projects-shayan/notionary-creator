@@ -8,13 +8,13 @@ import { DrawingBoard } from '@/components/DrawingBoard';
 import { Settings } from '@/components/Settings';
 import { Sidebar } from '@/components/Sidebar';
 
-export const MainContent = ({ currentPage }) => {
+export const MainContent = ({ currentPage, isDarkMode, toggleDarkMode }) => {
   const [title, setTitle] = useState('Untitled');
   const [content, setContent] = useState('');
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ top: 0, left: 0 });
   const contentRef = useRef<HTMLTextAreaElement>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -140,6 +140,7 @@ export const MainContent = ({ currentPage }) => {
     );
   };
 
+
   return (
     <div className="flex h-screen">
       <Sidebar onPageSelect={() => {}} isDarkMode={isDarkMode} />
@@ -152,7 +153,7 @@ export const MainContent = ({ currentPage }) => {
             className={`text-4xl font-bold w-full bg-transparent border-none outline-none ${isDarkMode ? 'text-white' : 'text-black'}`}
             placeholder="Untitled"
           />
-          <button onClick={toggleTheme} className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}>
+          <button onClick={toggleDarkMode} className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}>
             {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
           </button>
         </div>

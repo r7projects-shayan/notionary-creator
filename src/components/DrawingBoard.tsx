@@ -10,7 +10,7 @@ export const DrawingBoard = () => {
   const [color, setColor] = useState('#000000');
   const [tool, setTool] = useState('pencil');
   const [lineWidth, setLineWidth] = useState(5);
-  const [shape, setShape] = useState('');
+  const [shape, setShape] = useState('pencil');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,7 +27,7 @@ export const DrawingBoard = () => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (shape) {
+    if (shape !== 'pencil') {
       drawShape(context, x, y);
     } else {
       context.beginPath();
@@ -37,7 +37,7 @@ export const DrawingBoard = () => {
   };
 
   const draw = (e) => {
-    if (!isDrawing || shape) return;
+    if (!isDrawing || shape !== 'pencil') return;
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect();
@@ -49,7 +49,6 @@ export const DrawingBoard = () => {
 
   const stopDrawing = () => {
     setIsDrawing(false);
-    setShape('');
   };
 
   const drawShape = (context, x, y) => {
@@ -110,7 +109,7 @@ export const DrawingBoard = () => {
             <SelectValue placeholder="Select shape" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value=""><Pencil className="mr-2" />Free draw</SelectItem>
+            <SelectItem value="pencil"><Pencil className="mr-2" />Free draw</SelectItem>
             <SelectItem value="square"><Square className="mr-2" />Square</SelectItem>
             <SelectItem value="circle"><Circle className="mr-2" />Circle</SelectItem>
             <SelectItem value="triangle"><Triangle className="mr-2" />Triangle</SelectItem>

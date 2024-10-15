@@ -9,9 +9,14 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState({ name: 'Home' });
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handlePageSelect = (page) => {
     setCurrentPage(page);
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
   };
 
   return (
@@ -19,8 +24,8 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <div className="flex h-screen">
-          <Sidebar onPageSelect={handlePageSelect} />
-          <MainContent currentPage={currentPage} />
+          <Sidebar onPageSelect={handlePageSelect} isDarkMode={isDarkMode} />
+          <MainContent currentPage={currentPage} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
         </div>
       </TooltipProvider>
     </QueryClientProvider>
