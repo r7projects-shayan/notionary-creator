@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, CheckSquare, Edit3, Clock, FileText, Layout, List, Type, Code } from 'lucide-react';
 
 const commands = [
@@ -19,45 +19,57 @@ const commands = [
   { name: 'Code Snippet', icon: Code },
 ];
 
-export const CommandPalette = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface CommandPaletteProps {
+  onSelect: (command: string) => void;
+}
+
+export const CommandPalette: React.FC<CommandPaletteProps> = ({ onSelect }) => {
   const [search, setSearch] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const filteredCommands = commands.filter((command) =>
     command.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown') {
+        setSelectedIndex((prevIndex) => (prevIndex + 1) % filteredCommands.length);
+      } else if (e.key === 'ArrowUp') {
+        setSelectedIndex((prevIndex) => (prevIndex - 1 + filteredCommands.length) % filteredCommands.length);
+      } else if (e.key === 'Enter') {
+        onSelect(filteredCommands[selectedIndex].name);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [filteredCommands, selectedIndex, onSelect]);
+
   return (
-    <div className="relative">
+    <div className="w-64 bg-white border border-gray-300 rounded shadow-lg">
       <input
         type="text"
         value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setIsOpen(true);
-        }}
-        onFocus={() => setIsOpen(true)}
-        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-        className="w-full p-2 border border-gray-300 rounded"
-        placeholder="Type '/' for commands"
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full p-2 border-b border-gray-300"
+        placeholder="Search commands..."
+        autoFocus
       />
-      {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg">
-          {filteredCommands.map((command) => (
-            <div
-              key={command.name}
-              className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                console.log(`Selected: ${command.name}`);
-                setIsOpen(false);
-              }}
-            >
-              <command.icon size={18} className="mr-2" />
-              <span>{command.name}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="max-h-64 overflow-y-auto">
+        {filteredCommands.map((command, index) => (
+          <div
+            key={command.name}
+            className={`flex items-center p-2 cursor-pointer ${
+              index === selectedIndex ? 'bg-blue-100' : 'hover:bg-gray-100'
+            }`}
+            onClick={() => onSelect(command.name)}
+          >
+            <command.icon size={18} className="mr-2" />
+            <span>{command.name}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
